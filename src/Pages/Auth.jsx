@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import "react-phone-number-input/style.css";
@@ -23,6 +23,12 @@ export default function Auth() {
 
   const navigate = useNavigate();
 
+  useEffect(() => {
+    if (localStorage.getItem("isLoggedIn") === "true") {
+      navigate("/dashboard");
+    }
+  }, [navigate]);
+
   const sendOtp = async () => {
     const fullPhone = phone.startsWith("+") ? phone : "+91" + phone;
 
@@ -34,14 +40,15 @@ export default function Auth() {
       });
 
       const data = await res.json();
+
       if (data.success) {
-        alert("OTP sent to your phone.");
+        alert("OTP sent successfully!");
         setOtpSent(true);
       } else {
-        alert("Failed to send OTP: " + (data.message || "Unknown error."));
+        alert("Error sending OTP: " + data.message);
       }
     } catch (err) {
-      alert("Error sending OTP.");
+      alert("Failed to send OTP.");
       console.error("Send OTP error:", err);
     }
   };
@@ -57,6 +64,7 @@ export default function Auth() {
       });
 
       const data = await res.json();
+
       if (data.success) {
         alert("OTP Verified!");
 
@@ -66,13 +74,20 @@ export default function Auth() {
           email,
           firstName,
           lastName,
-          phone,
+          phone: fullPhone,
         };
         localStorage.setItem("user", JSON.stringify(newUser));
 
         setIsLogin(true);
         setOtp("");
         setOtpSent(false);
+        setFirstName("");
+        setLastName("");
+        setUsername("");
+        setEmail("");
+        setPassword("");
+        setConfirmPassword("");
+        setPhone("");
       } else {
         alert("Invalid OTP");
       }
@@ -85,6 +100,8 @@ export default function Auth() {
   const handleSubmit = () => {
     if (isLogin) {
       const storedUser = JSON.parse(localStorage.getItem("user"));
+      console.log("Login Attempt:", storedUser); // now declared correctly
+
       if (
         storedUser &&
         loginUsername === storedUser.username &&
@@ -114,7 +131,7 @@ export default function Auth() {
       }
 
       if (!otpSent) {
-        sendOtp();
+        sendOtp(phone);
       }
     }
   };
@@ -159,6 +176,7 @@ export default function Auth() {
                   onChange={(e) => setLoginUsername(e.target.value)}
                   required
                   placeholder="Username"
+                  autoComplete="username"
                 />
                 <div className="relative">
                   <input
@@ -205,6 +223,7 @@ export default function Auth() {
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   required
+                  autoComplete="username"
                 />
                 <input
                   type="email"
