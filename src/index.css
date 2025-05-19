@@ -19,3 +19,6 @@ html, body, #root {
   height: 100%;
   overflow: hidden;
 }
+.PhoneInputInput {
+  @apply w-full bg-transparent focus:outline-none placeholder-gray-500;
+}

@@ -66,7 +66,7 @@ export default function Auth() {
       const data = await res.json();
 
       if (data.success) {
-        alert("OTP Verified!");
+        alert("OTP Verified!"); 
 
         const newUser = {
           username,
@@ -100,7 +100,7 @@ export default function Auth() {
   const handleSubmit = () => {
     if (isLogin) {
       const storedUser = JSON.parse(localStorage.getItem("user"));
-      console.log("Login Attempt:", storedUser); // now declared correctly
+      console.log("Login Attempt:", storedUser);
 
       if (
         storedUser &&
@@ -233,14 +233,16 @@ export default function Auth() {
                   onChange={(e) => setEmail(e.target.value)}
                   required
                 />
-                <PhoneInput
-                  placeholder="Phone Number"
-                  defaultCountry="IN"
-                  value={phone}
-                  onChange={setPhone}
-                  className="phone-input"
-                  required
-                />
+                <div className="w-full">
+                  <PhoneInput
+                    placeholder="Phone Number"
+                    defaultCountry="IN"
+                    value={phone}
+                    onChange={setPhone}
+                    required
+                    className="PhoneInput w-full border border-gray-300 rounded-lg px-3 py-2 bg-white text-black text-base transition focus-within:ring-2 focus-within:ring-stone-600 focus-within:border-orange-950 hover:border-orange-600"
+                  />
+                </div>
                 <input
                   placeholder="Create Password"
                   type={showRegPassword ? "text" : "password"}
