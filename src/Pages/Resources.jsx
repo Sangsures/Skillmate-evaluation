@@ -1,104 +1,132 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
+
+const genres = ["programming", "javascript", "python", "react", "webdev"];
 
 const Resources = () => {
-  const [books, setBooks] = useState([]);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [startIndex, setStartIndex] = useState(0);
+  const [articles, setArticles] = useState([]);
+  const [genre, setGenre] = useState("programming");
+  const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
-  const fetchBooks = async (query, start = 0) => {
+  const fetchArticles = async (selectedGenre, selectedPage = 1) => {
     try {
+      setLoading(true);
       const response = await fetch(
-        `https://www.googleapis.com/books/v1/volumes?q=${query}&startIndex=${start}&maxResults=9`
+        `https://dev.to/api/articles?tag=${selectedGenre}&page=${selectedPage}&per_page=9`
       );
       const data = await response.json();
-      setBooks(data.items || []);
-      setStartIndex(start);
+      setArticles(data);
+      setLoading(false);
     } catch (error) {
-      console.error("Error fetching books:", error);
+      console.error("Error fetching articles:", error);
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchBooks("javascript");
-  }, []);
+    fetchArticles(genre, page);
+  }, [genre, page]);
 
-  const handleSearch = (e) => {
-    e.preventDefault();
-    fetchBooks(searchQuery);
+  const handleGenreChange = (newGenre) => {
+    setGenre(newGenre);
+    setPage(1);
   };
 
-  const handlePageChange = (newStartIndex) => {
-    fetchBooks(searchQuery || "javascript", newStartIndex);
+  const handlePageChange = (direction) => {
+    if (direction === "next") setPage((prev) => prev + 1);
+    if (direction === "prev" && page > 1) setPage((prev) => prev - 1);
   };
+
+  const filteredArticles = articles.filter((article) => {
+    const titleMatch = article.title
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+    const authorMatch = (article.user.name || "")
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+    return titleMatch || authorMatch;
+  });
 
   return (
     <div className="container mx-auto px-5 py-6">
-      <h1 className="text-2xl font-bold text-center mb-6">Learning Resources</h1>
+      <h1 className="text-3xl font-bold text-center mb-6 text-orange-900">
+        Learning Resources
+      </h1>
 
-      <form onSubmit={handleSearch} className="flex justify-center mb-6">
+      <div className="flex justify-center mb-6">
         <input
           type="text"
-          placeholder="Search books..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="border border-gray-300 rounded-md px-4 py-2 w-full md:w-1/2"
+          placeholder="Search articles by title or author..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="w-full max-w-md px-4 py-2 border border-orange-900 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-900"
         />
-        <button
-          type="submit"
-          className="ml-2 px-4 py-2 bg-orange-900 text-white rounded-md"
-        >
-          Search
-        </button>
-      </form>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {books.map((book, index) => {
-          const volumeInfo = book.volumeInfo;
-          return (
-            <div
-              key={index}
-              className="border border-gray-300 rounded-md shadow-md p-4"
-            >
-              {volumeInfo.imageLinks?.thumbnail && (
-                <img
-                  src={volumeInfo.imageLinks.thumbnail}
-                  alt={volumeInfo.title}
-                  className="mb-4 w-full h-60 object-cover"
-                />
-              )}
-              <h3 className="font-bold text-lg mb-2">{volumeInfo.title}</h3>
-              <p className="text-gray-600 text-sm mb-2">
-                {volumeInfo.authors ? volumeInfo.authors.join(", ") : "Unknown Author"}
-              </p>
-              {volumeInfo.averageRating && (
-                <p className="text-yellow-500 text-sm mb-2">
-                  Rating: {volumeInfo.averageRating} / 5
-                </p>
-              )}
-              <a
-                href={volumeInfo.infoLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-orange-950 hover:underline"
-              >
-                More Info
-              </a>
-            </div>
-          );
-        })}
       </div>
 
-      <div className="flex justify-center mt-6">
+      <div className="flex flex-wrap justify-center mb-6 gap-2">
+        {genres.map((tag) => (
+          <button
+            key={tag}
+            onClick={() => handleGenreChange(tag)}
+            className={`px-4 py-2 rounded-full border ${
+              genre === tag
+                ? "bg-orange-900 text-white"
+                : "bg-white text-orange-900 border-orange-900"
+            } transition`}
+          >
+            {tag}
+          </button>
+        ))}
+      </div>
+
+      {loading ? (
+        <div className="text-center text-gray-500 text-lg">
+          Loading articles...
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredArticles.length > 0 ? (
+            filteredArticles.map((article) => (
+              <div
+                key={article.id}
+                className="border border-gray-300 rounded-md shadow-md p-4 flex flex-col justify-between"
+              >
+                <h3 className="font-bold text-lg mb-2">{article.title}</h3>
+                <p className="text-sm text-gray-600 mb-2">
+                  By {article.user.name || "Unknown Author"}
+                </p>
+                <a
+                  href={article.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-auto text-orange-900 hover:underline"
+                >
+                  Read More →
+                </a>
+              </div>
+            ))
+          ) : (
+            <div className="col-span-3 text-center text-gray-500">
+              No articles found.
+            </div>
+          )}
+        </div>
+      )}
+      <div className="flex justify-center mt-6 gap-4">
         <button
-          onClick={() => handlePageChange(Math.max(0, startIndex - 10))}
-          disabled={startIndex === 0}
-          className="mr-2 px-4 py-2 bg-gray-300 rounded-md"
+          onClick={() => handlePageChange("prev")}
+          disabled={page === 1}
+          className="px-4 py-2 bg-gray-300 rounded-md"
         >
           Previous
         </button>
+        <span className="px-4 py-2 text-orange-900 font-semibold">
+          Page {page}
+        </span>
         <button
-          onClick={() => handlePageChange(startIndex + 10)}
-          className="ml-2 px-4 py-2 bg-orange-950 text-white rounded-md"
+          onClick={() => handlePageChange("next")}
+          className="px-4 py-2 bg-orange-900 text-white rounded-md"
         >
           Next
         </button>
