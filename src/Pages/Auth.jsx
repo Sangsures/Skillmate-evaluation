@@ -76,7 +76,9 @@ export default function Auth() {
           lastName,
           phone: fullPhone,
         };
+        console.log("newUser",newUser);
         localStorage.setItem("user", JSON.stringify(newUser));
+        console.log(localStorage.getItem("user"));
 
         setIsLogin(true);
         setOtp("");
@@ -99,6 +101,7 @@ export default function Auth() {
 
   const handleSubmit = () => {
     if (isLogin) {
+      console.log("localStorage",localStorage)
       const storedUser = JSON.parse(localStorage.getItem("user"));
       console.log("Login Attempt:", storedUser);
 
@@ -110,7 +113,7 @@ export default function Auth() {
         localStorage.setItem("isLoggedIn", "true");
         navigate("/dashboard");
       } else {
-        alert("Invalid username or password!");
+        alert("Invalid username or password!!!!!!!!!!!!!!!!!!");
       }
     } else {
       if (

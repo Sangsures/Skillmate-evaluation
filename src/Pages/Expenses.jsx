@@ -2,8 +2,8 @@ import React from 'react'
 
 const Expenses = () => {
   return (
-    <div>
-        hi
+    <div className='text-center text-gray-950'>
+      HI
     </div>
   )
 }

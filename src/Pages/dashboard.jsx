@@ -13,8 +13,8 @@ export default function Dashboard() {
   }, [navigate]);
 
   const handleLogout = () => {
+    console.log("entered")
     localStorage.removeItem("isLoggedIn");
-    localStorage.removeItem("user");
     navigate("/");
   };
 

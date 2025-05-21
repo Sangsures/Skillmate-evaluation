@@ -1,7 +1,4 @@
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
+import {BrowserRouter as Router,Routes,Route,
   Navigate,
 } from "react-router-dom";
 import Auth from "./Pages/Auth";
