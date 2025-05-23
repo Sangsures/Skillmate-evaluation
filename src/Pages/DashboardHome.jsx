@@ -1,207 +1,111 @@
-import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { addExpense, deleteExpense } from "../redux/expenseSlice";
-import { Pie } from "react-chartjs-2";
-import "chart.js/auto";
+import React from "react";
+import SkillProgressChart from "./SkillProgressChart";
+import TimeSpentChart from "./TimeSpentChart";
 
-const Expenses = () => {
-  const [budget, setBudget] = useState("");
-  const [form, setForm] = useState({ amount: "", category: "", description: "", date: "" });
-  const [filter, setFilter] = useState("");
-  const dispatch = useDispatch();
-  const expenses = useSelector((state) => state.expenses);
-
-  const defaultCategories = [
-    "Food",
-    "Transport",
-    "Shopping",
-    "Healthcare",
-    "Education",
-    "Entertainment",
-    "Bills",
-    "Savings",
-    "Travel",
-    "Other",
-  ];
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setForm({ ...form, [name]: value });
-  };
-
-  const handleBudgetChange = (e) => {
-    setBudget(e.target.value);
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    dispatch(addExpense(form));
-    setForm({ amount: "", category: "", description: "", date: "" });
-  };
-
-  const filteredExpenses = filter
-    ? expenses.filter((expense) => expense.category === filter)
-    : expenses;
-
-  const totalExpense = filteredExpenses.reduce(
-    (acc, expense) => acc + parseFloat(expense.amount || 0),
-    0
-  );
-
-  const remainingBudget = budget - totalExpense;
-
-  const categoryBreakdown = filteredExpenses.reduce((acc, expense) => {
-    acc[expense.category] = (acc[expense.category] || 0) + parseFloat(expense.amount);
-    return acc;
-  }, {});
-
-  const pieChartData = {
-    labels: Object.keys(categoryBreakdown),
-    datasets: [
-      {
-        data: Object.values(categoryBreakdown),
-        backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0", "#9966FF"],
-        hoverBackgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0", "#9966FF"],
-      },
-    ],
-  };
-
+function DashboardCard({ title, progress }) {
   return (
-    <div className="container mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-6 text-center">Expense Tracker</h1>
-      <div className="flex flex-col lg:flex-row gap-6 items-start">
-        <div className="w-full lg:w-1/3 bg-white p-4 shadow rounded-md">
-          <label htmlFor="budget" className="block text-lg font-semibold mb-2">
-            Monthly Budget (₹):
-          </label>
-          <input
-            id="budget"
-            type="number"
-            value={budget}
-            onChange={handleBudgetChange}
-            className="p-2 border rounded w-full mb-4"
-          />
-          <div className="text-lg font-bold">
-            Total Expense: <span className="text-red-500">₹{totalExpense.toFixed(2)}</span>
-          </div>
-          <div className="text-lg font-bold mt-2">
-            Remaining Budget:{" "}
-            <span className={remainingBudget >= 0 ? "text-green-500" : "text-red-500"}>
-              ₹{remainingBudget.toFixed(2)}
-            </span>
-          </div>
-        </div>
-        <form
-          onSubmit={handleSubmit}
-          className="w-full lg:w-2/3 bg-white p-4 shadow rounded-md"
-        >
-          <h2 className="text-xl font-bold mb-4">Add Expense</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <input
-              name="amount"
-              placeholder="Amount (₹)"
-              type="number"
-              value={form.amount}
-              onChange={handleInputChange}
-              required
-              className="p-2 border rounded"
-            />
-            <select
-              name="category"
-              value={form.category}
-              onChange={handleInputChange}
-              required
-              className="p-2 border rounded"
-            >
-              <option value="" disabled>
-                Select Category
-              </option>
-              {defaultCategories.map((category) => (
-                <option key={category} value={category}>
-                  {category}
-                </option>
-              ))}
-            </select>
-            <input
-              name="description"
-              placeholder="Description"
-              value={form.description}
-              onChange={handleInputChange}
-              required
-              className="p-2 border rounded col-span-full"
-            />
-            <input
-              name="date"
-              type="date"
-              value={form.date}
-              onChange={handleInputChange}
-              required
-              className="p-2 border rounded col-span-full"
-            />
-          </div>
-          <button
-            type="submit"
-            className="bg-blue-500 text-white py-2 px-4 rounded mt-4 w-full"
-          >
-            Add Expense
-          </button>
-        </form>
+    <div className="bg-white p-6 rounded-xl shadow-md">
+      <h3 className="text-lg font-semibold text-orange-950 mb-2">{title}</h3>
+      <div className="w-full bg-gray-200 rounded-full h-3">
+        <div
+          className="bg-orange-500 h-3 rounded-full"
+          style={{ width: `${progress}%` }}
+        ></div>
       </div>
-      <div className="flex flex-col lg:flex-row gap-6 mt-6">
-        
-        <div className="w-full lg:w-2/3 bg-white p-4 shadow rounded-md">
-          <h2 className="text-xl font-bold mb-4">Expenses</h2>
-          <div className="mb-4">
-            <label htmlFor="filter" className="block font-semibold mb-2">
-              Filter by Category:
-            </label>
-            <select
-              id="filter"
-              onChange={(e) => setFilter(e.target.value)}
-              value={filter}
-              className="p-2 border rounded w-full"
-            >
-              <option value="">All</option>
-              {defaultCategories.map((category) => (
-                <option key={category} value={category}>
-                  {category}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="grid grid-cols-1 gap-4">
-            {filteredExpenses.map((expense, index) => (
-              <div
-                key={index}
-                className="p-4 bg-gray-100 shadow rounded flex justify-between items-center"
-              >
-                <div>
-                  <p className="text-lg font-semibold">
-                    ₹{expense.amount} - {expense.category}
-                  </p>
-                  <p className="text-sm text-gray-600">{expense.description}</p>
-                  <p className="text-sm text-gray-400">{expense.date}</p>
-                </div>
-                <button
-                  onClick={() => dispatch(deleteExpense(index))}
-                  className="text-red-500 hover:text-red-700"
-                >
-                  Delete
-                </button>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="w-full lg:w-1/3 bg-white p-4 shadow rounded-md">
-          <h2 className="text-xl font-bold mb-4">Expense Breakdown</h2>
-          <div className="max-w-xs mx-auto">
-            <Pie data={pieChartData} />
-          </div>
-        </div>
-      </div>
+      <p className="text-sm text-gray-600 mt-2">{progress}% Completed</p>
     </div>
   );
-};
+}
 
-export default Expenses;
+function QuickLinks() {
+  return (
+    <div className="bg-white p-6 rounded-xl shadow-md min-h-[14rem]">
+      <h3 className="text-lg font-semibold text-orange-950 mb-4">
+        Quick Links
+      </h3>
+      <ul className="text-sm text-orange-900 space-y-2">
+        <li>
+          <a href="#" className="hover:underline">
+            Add New Skill
+          </a>
+        </li>
+        <li>
+          <a href="#" className="hover:underline">
+            View All Courses
+          </a>
+        </li>
+        <li>
+          <a href="#" className="hover:underline">
+            Edit Profile
+          </a>
+        </li>
+      </ul>
+    </div>
+  );
+}
+
+function RecentActivity() {
+  return (
+    <div className="bg-white p-6 rounded-xl shadow-md min-h-[14rem]">
+      <h3 className="text-lg font-semibold text-orange-950 mb-4">
+        Recent Activity
+      </h3>
+      <ul className="text-sm text-gray-600 space-y-1">
+        <li>Completed "React Basics" module</li>
+        <li>Watched "Redux Intro" video</li>
+        <li>Added new goal: Learn TypeScript</li>
+      </ul>
+    </div>
+  );
+}
+
+function UpcomingTasks() {
+  return (
+    <div className="bg-white p-6 rounded-xl shadow-md min-h-[14rem]">
+      <h3 className="text-lg font-semibold text-orange-950 mb-4">
+        Upcoming Tasks
+      </h3>
+      <ul className="text-sm text-gray-700 list-disc pl-4 space-y-2">
+        <li>Finish 2 more lessons in UI Design</li>
+        <li>Start backend integration</li>
+        <li>Practice React Testing</li>
+      </ul>
+    </div>
+  );
+}
+
+export default function DashboardHome() {
+  return (
+    <div className="max-w-7xl mx-auto space-y-6">
+      <header className="flex justify-between items-center">
+        <h1 className="text-3xl font-bold text-orange-950">
+          Welcome back, Rohit!
+        </h1>
+        <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
+          R
+        </div>
+      </header>
+
+      <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        <DashboardCard title="Skills Completed" progress={75} />
+        <DashboardCard title="Content Progressed" progress={60} />
+        <DashboardCard title="Courses to be learned" progress={35} />
+      </section>
+
+      <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="bg-white p-4 rounded-xl shadow-md min-h-[18rem] flex items-center justify-center">
+          <SkillProgressChart />
+        </div>
+        <div className="bg-white p-4 rounded-xl shadow-md min-h-[18rem] flex items-center justify-center">
+          <TimeSpentChart />
+        </div>
+      </section>
+
+      <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-8">
+        <QuickLinks />
+        <RecentActivity />
+        <UpcomingTasks />
+      </section>
+    </div>
+  );
+}

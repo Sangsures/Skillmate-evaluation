@@ -67,11 +67,11 @@ const Expenses = () => {
   };
 
   return (
-    <div className="container mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-6 text-center">Expense Tracker</h1>
+    <div className="container mx-auto p-6 space-y-6">
+      <h1 className="text-3xl font-bold text-center">Expense Tracker</h1>
 
-      <div className="flex flex-col lg:flex-row gap-6 items-start">
-        <div className="w-full h-auto lg:w-1/3 bg-white p-4 shadow rounded-md">
+      <div className="grid lg:grid-cols-3 gap-6">
+        <div className="bg-white shadow-lg p-6 rounded-md col-span-1">
           <label htmlFor="budget" className="block text-lg font-semibold mb-2">
             Monthly Budget (₹):
           </label>
@@ -93,44 +93,43 @@ const Expenses = () => {
           </div>
         </div>
 
-        <form
-          onSubmit={handleSubmit}
-          className="w-full lg:w-2/3 bg-white p-4 shadow rounded-md"
-        >
+        <div className="bg-white shadow-lg p-6 rounded-md col-span-2">
           <h2 className="text-xl font-bold mb-4">Add Expense</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <input
-              name="amount"
-              placeholder="Amount (₹)"
-              type="number"
-              value={form.amount}
-              onChange={handleInputChange}
-              required
-              className="p-2 border rounded"
-            />
-            <select
-              name="category"
-              value={form.category}
-              onChange={handleInputChange}
-              required
-              className="p-2 border rounded"
-            >
-              <option value="" disabled>
-                Select Category
-              </option>
-              {defaultCategories.map((category) => (
-                <option key={category} value={category}>
-                  {category}
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <input
+                name="amount"
+                placeholder="Amount (₹)"
+                type="number"
+                value={form.amount}
+                onChange={handleInputChange}
+                required
+                className="p-2 border rounded"
+              />
+              <select
+                name="category"
+                value={form.category}
+                onChange={handleInputChange}
+                required
+                className="p-2 border rounded"
+              >
+                <option value="" disabled>
+                  Select Category
                 </option>
-              ))}
-            </select>
+                {defaultCategories.map((category) => (
+                  <option key={category} value={category}>
+                    {category}
+                  </option>
+                ))}
+              </select>
+            </div>
             <input
               name="description"
               placeholder="Description"
               value={form.description}
               onChange={handleInputChange}
               required
-              className="p-2 border rounded col-span-full"
+              className="p-2 border rounded w-full"
             />
             <input
               name="date"
@@ -138,40 +137,38 @@ const Expenses = () => {
               value={form.date}
               onChange={handleInputChange}
               required
-              className="p-2 border rounded col-span-full"
+              className="p-2 border rounded w-full"
             />
-          </div>
-          <button
-            type="submit"
-            className="bg-blue-500 text-white py-2 px-4 rounded mt-4 w-full"
-          >
-            Add Expense
-          </button>
-        </form>
+            <button
+              type="submit"
+              className="bg-blue-500 text-white py-2 px-4 rounded w-full hover:bg-blue-600 transition-colors"
+            >
+              Add Expense
+            </button>
+          </form>
+        </div>
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-6 mt-6">
-        <div className="w-full lg:w-2/3 bg-white p-4 shadow rounded-md">
+      <div className="grid lg:grid-cols-3 gap-6">
+        <div className="bg-white shadow-lg p-6 rounded-md col-span-2">
           <h2 className="text-xl font-bold mb-4">Expenses</h2>
-          <div className="mb-4">
-            <label htmlFor="filter" className="block font-semibold mb-2">
-              Filter by Category:
-            </label>
-            <select
-              id="filter"
-              onChange={(e) => setFilter(e.target.value)}
-              value={filter}
-              className="p-2 border rounded w-full"
-            >
-              <option value="">All</option>
-              {defaultCategories.map((category) => (
-                <option key={category} value={category}>
-                  {category}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="grid grid-cols-1 gap-4">
+          <label htmlFor="filter" className="block font-semibold mb-2">
+            Filter by Category:
+          </label>
+          <select
+            id="filter"
+            onChange={(e) => setFilter(e.target.value)}
+            value={filter}
+            className="p-2 border rounded mb-4 w-full"
+          >
+            <option value="">All</option>
+            {defaultCategories.map((category) => (
+              <option key={category} value={category}>
+                {category}
+              </option>
+            ))}
+          </select>
+          <div className="space-y-4">
             {filteredExpenses.map((expense, index) => (
               <div
                 key={index}
@@ -195,8 +192,7 @@ const Expenses = () => {
           </div>
         </div>
 
-        
-        <div className="w-full lg:w-1/3 bg-white p-4 shadow rounded-md">
+        <div className="bg-white shadow-lg p-6 rounded-md">
           <h2 className="text-xl font-bold mb-4">Expense Breakdown</h2>
           <div className="max-w-xs mx-auto">
             <Pie data={pieChartData} />

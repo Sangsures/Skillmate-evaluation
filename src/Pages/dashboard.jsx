@@ -13,7 +13,7 @@ export default function Dashboard() {
   }, [navigate]);
 
   const handleLogout = () => {
-    console.log("entered")
+    console.log("entered");
     localStorage.removeItem("isLoggedIn");
     navigate("/");
   };
@@ -25,6 +25,7 @@ export default function Dashboard() {
           <NavLink
             to="/dashboard"
             className="flex items-center gap-3 mb-6"
+            exact
           >
             <img
               src="https://www.svgrepo.com/show/385312/learning-head-book-education.svg"
