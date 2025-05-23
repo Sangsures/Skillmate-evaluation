@@ -141,7 +141,7 @@ const Expenses = () => {
             />
             <button
               type="submit"
-              className="bg-blue-500 text-white py-2 px-4 rounded w-full hover:bg-blue-600 transition-colors"
+              className="bg-orange-950 text-white py-2 px-4 rounded w-full hover:bg-stone-600 transition-colors"
             >
               Add Expense
             </button>

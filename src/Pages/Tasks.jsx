@@ -12,7 +12,7 @@ import {
 const Tasks = () => {
   const dispatch = useDispatch();
   const [title, setTitle] = useState("");
-  const [editState, setEditState] = useState({ id: null, title: "" }); // Track editing
+  const [editState, setEditState] = useState({ id: null, title: "" }); 
 
   const { tasks, filter, currentPage, tasksPerPage } = useSelector(
     (state) => state.tasks
@@ -28,7 +28,6 @@ const Tasks = () => {
   const handleEdit = (id, title) => {
     setEditState({ id, title });
   };
-
   const handleEditSubmit = () => {
     if (editState.title.trim()) {
       dispatch(editTask({ id: editState.id, title: editState.title }));
