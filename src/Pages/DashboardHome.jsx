@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import SkillProgressChart from "./SkillProgressChart";
 import TimeSpentChart from "./TimeSpentChart";
 
@@ -20,25 +20,11 @@ function DashboardCard({ title, progress }) {
 function QuickLinks() {
   return (
     <div className="bg-white p-6 rounded-xl shadow-md min-h-[14rem]">
-      <h3 className="text-lg font-semibold text-orange-950 mb-4">
-        Quick Links
-      </h3>
+      <h3 className="text-lg font-semibold text-orange-950 mb-4">Quick Links</h3>
       <ul className="text-sm text-orange-900 space-y-2">
-        <li>
-          <a href="#" className="hover:underline">
-            Add New Skill
-          </a>
-        </li>
-        <li>
-          <a href="#" className="hover:underline">
-            View All Courses
-          </a>
-        </li>
-        <li>
-          <a href="#" className="hover:underline">
-            Edit Profile
-          </a>
-        </li>
+        <li><a href="#" className="hover:underline">Add New Skill</a></li>
+        <li><a href="#" className="hover:underline">View All Courses</a></li>
+        <li><a href="#" className="hover:underline">Edit Profile</a></li>
       </ul>
     </div>
   );
@@ -47,9 +33,7 @@ function QuickLinks() {
 function RecentActivity() {
   return (
     <div className="bg-white p-6 rounded-xl shadow-md min-h-[14rem]">
-      <h3 className="text-lg font-semibold text-orange-950 mb-4">
-        Recent Activity
-      </h3>
+      <h3 className="text-lg font-semibold text-orange-950 mb-4">Recent Activity</h3>
       <ul className="text-sm text-gray-600 space-y-1">
         <li>Completed "React Basics" module</li>
         <li>Watched "Redux Intro" video</li>
@@ -62,9 +46,7 @@ function RecentActivity() {
 function UpcomingTasks() {
   return (
     <div className="bg-white p-6 rounded-xl shadow-md min-h-[14rem]">
-      <h3 className="text-lg font-semibold text-orange-950 mb-4">
-        Upcoming Tasks
-      </h3>
+      <h3 className="text-lg font-semibold text-orange-950 mb-4">Upcoming Tasks</h3>
       <ul className="text-sm text-gray-700 list-disc pl-4 space-y-2">
         <li>Finish 2 more lessons in UI Design</li>
         <li>Start backend integration</li>
@@ -75,14 +57,23 @@ function UpcomingTasks() {
 }
 
 export default function DashboardHome() {
+  const [firstName, setFirstName] = useState("");
+
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user && user.firstName) {
+      setFirstName(user.firstName);
+    }
+  }, []);
+
   return (
     <div className="max-w-7xl mx-auto space-y-6">
       <header className="flex justify-between items-center">
         <h1 className="text-3xl font-bold text-orange-950">
-          Welcome back, Rohit!
+          Welcome back, {firstName || "User"}!
         </h1>
-        <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
-          R
+        <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center text-lg font-semibold text-orange-950">
+          {firstName ? firstName.charAt(0).toUpperCase() : "U"}
         </div>
       </header>
 

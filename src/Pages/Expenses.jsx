@@ -6,7 +6,12 @@ import "chart.js/auto";
 
 const Expenses = () => {
   const [budget, setBudget] = useState("");
-  const [form, setForm] = useState({ amount: "", category: "", description: "", date: "" });
+  const [form, setForm] = useState({
+    amount: "",
+    category: "",
+    description: "",
+    date: "",
+  });
   const [filter, setFilter] = useState("");
   const dispatch = useDispatch();
   const expenses = useSelector((state) => state.expenses);
@@ -17,11 +22,6 @@ const Expenses = () => {
     "Shopping",
     "Healthcare",
     "Education",
-    "Entertainment",
-    "Bills",
-    "Savings",
-    "Travel",
-    "Other",
   ];
 
   const handleInputChange = (e) => {
@@ -51,7 +51,8 @@ const Expenses = () => {
   const remainingBudget = budget - totalExpense;
 
   const categoryBreakdown = filteredExpenses.reduce((acc, expense) => {
-    acc[expense.category] = (acc[expense.category] || 0) + parseFloat(expense.amount);
+    acc[expense.category] =
+      (acc[expense.category] || 0) + parseFloat(expense.amount);
     return acc;
   }, {});
 
@@ -60,8 +61,20 @@ const Expenses = () => {
     datasets: [
       {
         data: Object.values(categoryBreakdown),
-        backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0", "#9966FF"],
-        hoverBackgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0", "#9966FF"],
+        backgroundColor: [
+          "#FF6384",
+          "#36A2EB",
+          "#FFCE56",
+          "#4BC0C0",
+          "#9966FF",
+        ],
+        hoverBackgroundColor: [
+          "#FF6384",
+          "#36A2EB",
+          "#FFCE56",
+          "#4BC0C0",
+          "#9966FF",
+        ],
       },
     ],
   };
@@ -83,11 +96,16 @@ const Expenses = () => {
             className="p-2 border rounded w-full mb-4"
           />
           <div className="text-lg font-bold">
-            Total Expense: <span className="text-red-500">₹{totalExpense.toFixed(2)}</span>
+            Total Expense:{" "}
+            <span className="text-red-500">₹{totalExpense.toFixed(2)}</span>
           </div>
           <div className="text-lg font-bold mt-2">
             Remaining Budget:{" "}
-            <span className={remainingBudget >= 0 ? "text-green-500" : "text-red-500"}>
+            <span
+              className={
+                remainingBudget >= 0 ? "text-green-500" : "text-red-500"
+              }
+            >
               ₹{remainingBudget.toFixed(2)}
             </span>
           </div>
@@ -131,7 +149,12 @@ const Expenses = () => {
               required
               className="p-2 border rounded w-full"
             />
+
+            <label htmlFor="date" className="block font-semibold">
+              Date
+            </label>
             <input
+              id="date"
               name="date"
               type="date"
               value={form.date}

@@ -113,7 +113,7 @@ export default function Auth() {
         localStorage.setItem("isLoggedIn", "true");
         navigate("/dashboard");
       } else {
-        alert("Invalid username or password!!!!!!!!!!!!!!!!!!");
+        alert("Invalid username or password!");
       }
     } else {
       if (

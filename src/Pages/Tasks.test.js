@@ -29,7 +29,7 @@ function renderWithStore(storeState) {
   };
 }
 
-describe("Tasks Component (Simple Tests)", () => {
+describe("Tasks Component", () => {
   const initialState = {
     tasks: {
       tasks: [
@@ -42,8 +42,14 @@ describe("Tasks Component (Simple Tests)", () => {
     },
   };
 
-  it("renders tasks", () => {
-    renderWithStore(initialState);
+  it("renders the tasks component with initial state", () => {
+    const { store } = renderWithStore(initialState);
+
+    console.log("Rendering Tasks component with initial state:");
+    console.log(initialState);
+    console.log("Dispatching actions:");
+    console.log(store.dispatch);
+
     expect(screen.getByText("Task 1")).toBeInTheDocument();
     expect(screen.getByText("Task 2")).toBeInTheDocument();
   });
